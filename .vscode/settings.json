@@ -6,6 +6,7 @@
         "webservices.h": "c",
         "winapifamily.h": "c",
         "wifi_app.h": "c",
-        "tasks_common.h": "c"
+        "tasks_common.h": "c",
+        "sntp_time_sync.h": "c"
     }
 }

@@ -4,22 +4,27 @@
 #include "esp_ota_ops.h"
 #include "esp_timer.h"
 #include "sys/param.h"
+#include "wifi_app.h"
+#include "esp_wifi.h"
+#include "lwip/ip4_addr.h"
 
 #include "DHT22.h"
 #include "http_server.h"
 #include "tasks_common.h"
-#include "wifi_app.h"
+#include "sntp_time_sync.h"
 
 static const char TAG[] = "http_server";
 
 static int g_fw_update_status = OTA_UPDATE_PENDING;
+static bool g_is_local_time_set = false;
+
+static int g_wifi_connect_status = NONE;
 
 static httpd_handle_t http_server_handle = NULL;
 
 static TaskHandle_t task_http_server_monitor = NULL;
 
 static QueueHandle_t http_server_monitor_queue_handle;
-
 
 const esp_timer_create_args_t fw_update_reset_args = {
 	.callback = &http_server_fw_update_reset_callback,
@@ -51,7 +56,6 @@ extern const uint8_t kwh_png_end[] asm("_binary_kwh_png_end");
 extern const uint8_t potencia_png_start[] asm("_binary_potencia_png_start");
 extern const uint8_t potencia_png_end[] asm("_binary_potencia_png_end");
 
-
 static void http_server_fw_update_reset_timer(void)
 {
 	if (g_fw_update_status == OTA_UPDATE_SUCCESSFUL)
@@ -68,8 +72,8 @@ static void http_server_fw_update_reset_timer(void)
 }
 
 /**
- * 
- * @param pvParameters 
+ *
+ * @param pvParameters
  */
 static void http_server_monitor(void *parameter)
 {
@@ -84,15 +88,28 @@ static void http_server_monitor(void *parameter)
 			case HTTP_MSG_WIFI_CONNECT_INIT:
 				ESP_LOGI(TAG, "HTTP_MSG_WIFI_CONNECT_INIT");
 
+				g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECTING;
+
 				break;
 
 			case HTTP_MSG_WIFI_CONNECT_SUCCESS:
 				ESP_LOGI(TAG, "HTTP_MSG_WIFI_CONNECT_SUCCESS");
 
+				g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_SUCCESS;
+
 				break;
 
 			case HTTP_MSG_WIFI_CONNECT_FAIL:
 				ESP_LOGI(TAG, "HTTP_MSG_WIFI_CONNECT_FAIL");
+
+				g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_FAILED;
+
+				break;
+
+			case HTTP_MSG_WIFI_USER_DISCONNECT:
+				ESP_LOGI(TAG, "HTTP_MSG_WIFI_USER_DISCONNECT");
+
+				g_wifi_connect_status = HTTP_WIFI_STATUS_DISCONNECTED;
 
 				break;
 
@@ -109,7 +126,10 @@ static void http_server_monitor(void *parameter)
 
 				break;
 
-			default:
+			case HTTP_MSG_TIME_SERVICE_INITIALIZED:
+				ESP_LOGI(TAG, "HTTP_MSG_TIME_SERVICE_INITIALIZED");
+				g_is_local_time_set = true;
+
 				break;
 			}
 		}
@@ -117,9 +137,9 @@ static void http_server_monitor(void *parameter)
 }
 
 /**
- * 
- * @param req 
- * @return 
+ * Jquery get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
  */
 static esp_err_t http_server_jquery_handler(httpd_req_t *req)
 {
@@ -132,9 +152,9 @@ static esp_err_t http_server_jquery_handler(httpd_req_t *req)
 }
 
 /**
- *
- * @param req 
- * @return 
+ * Sends the index.html page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
  */
 static esp_err_t http_server_index_html_handler(httpd_req_t *req)
 {
@@ -147,9 +167,9 @@ static esp_err_t http_server_index_html_handler(httpd_req_t *req)
 }
 
 /**
- * 
- * @param req 
- * @return 
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
  */
 static esp_err_t http_server_app_css_handler(httpd_req_t *req)
 {
@@ -160,11 +180,10 @@ static esp_err_t http_server_app_css_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
-
 /**
- * 
- * @param req 
- * @return 
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
  */
 static esp_err_t http_server_app_js_handler(httpd_req_t *req)
 {
@@ -177,9 +196,9 @@ static esp_err_t http_server_app_js_handler(httpd_req_t *req)
 }
 
 /**
- * 
- * @param req 
- * @return 
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
  */
 static esp_err_t http_server_favicon_ico_handler(httpd_req_t *req)
 {
@@ -190,6 +209,11 @@ static esp_err_t http_server_favicon_ico_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
+/**
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
 static esp_err_t http_server_tensao_png_handler(httpd_req_t *req)
 {
 	ESP_LOGI(TAG, "tensao.png requested");
@@ -199,6 +223,11 @@ static esp_err_t http_server_tensao_png_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
+/**
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
 static esp_err_t http_server_corrente_png_handler(httpd_req_t *req)
 {
 	ESP_LOGI(TAG, "corrente.png requested");
@@ -208,6 +237,11 @@ static esp_err_t http_server_corrente_png_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
+/**
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
 static esp_err_t http_server_custo_png_handler(httpd_req_t *req)
 {
 	ESP_LOGI(TAG, "custo.png requested");
@@ -217,6 +251,11 @@ static esp_err_t http_server_custo_png_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
+/**
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
 static esp_err_t http_server_gastos_png_handler(httpd_req_t *req)
 {
 	ESP_LOGI(TAG, "gastos.png requested");
@@ -226,6 +265,11 @@ static esp_err_t http_server_gastos_png_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
+/**
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
 static esp_err_t http_server_kwh_png_handler(httpd_req_t *req)
 {
 	ESP_LOGI(TAG, "kwh.png requested");
@@ -235,6 +279,11 @@ static esp_err_t http_server_kwh_png_handler(httpd_req_t *req)
 
 	return ESP_OK;
 }
+/**
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
 static esp_err_t http_server_potencia_png_handler(httpd_req_t *req)
 {
 	ESP_LOGI(TAG, "potencia.png requested");
@@ -244,9 +293,9 @@ static esp_err_t http_server_potencia_png_handler(httpd_req_t *req)
 	return ESP_OK;
 }
 /**
-
- @param req 
- @return
+ * app.css get handler is requested when accessing the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
  */
 esp_err_t http_server_OTA_update_handler(httpd_req_t *req)
 {
@@ -265,11 +314,11 @@ esp_err_t http_server_OTA_update_handler(httpd_req_t *req)
 	{
 		if ((recv_len = httpd_req_recv(req, ota_buff, MIN(content_length, sizeof(ota_buff)))) < 0)
 		{
-		
+
 			if (recv_len == HTTPD_SOCK_ERR_TIMEOUT)
 			{
 				ESP_LOGI(TAG, "http_server_OTA_update_handler: Socket Timeout");
-				continue; 
+				continue;
 			}
 			ESP_LOGI(TAG, "http_server_OTA_update_handler: OTA other Error %d", recv_len);
 			return ESP_FAIL;
@@ -366,10 +415,166 @@ static esp_err_t http_server_get_dht_sensor_readings_json_handler(httpd_req_t *r
 
 	char dhtSensorJSON[100];
 
-	sprintf(dhtSensorJSON, "{\"voltage\":\"%.1f\",\"current\":\"%.1f\"}", getVoltage(), getCurrent());
+	sprintf(dhtSensorJSON, "{\"voltage\":\"%.1f\",\"current\":\"%.2f\",\"power\":\"%.2f\",\"total\":\"%.1f\",\"custo\":\"%.2f\"}", getVoltage(), getCurrent(), getPower(), getTotalEnergy(), getCustoPorHora());
 
 	httpd_resp_set_type(req, "application/json");
 	httpd_resp_send(req, dhtSensorJSON, strlen(dhtSensorJSON));
+
+	return ESP_OK;
+}
+static esp_err_t http_server_wifi_connect_json_handler(httpd_req_t *req)
+{
+	ESP_LOGI(TAG, "/wifiConnect.json requested");
+
+	size_t len_ssid = 0, len_pass = 0;
+	char *ssid_str = NULL, *pass_str = NULL;
+
+	// Get SSID header
+	len_ssid = httpd_req_get_hdr_value_len(req, "my-connect-ssid") + 1;
+	if (len_ssid > 1)
+	{
+		ssid_str = malloc(len_ssid);
+		if (httpd_req_get_hdr_value_str(req, "my-connect-ssid", ssid_str, len_ssid) == ESP_OK)
+		{
+			ESP_LOGI(TAG, "http_server_wifi_connect_json_handler: Found header => my-connect-ssid: %s", ssid_str);
+		}
+	}
+
+	// Get Password header
+	len_pass = httpd_req_get_hdr_value_len(req, "my-connect-pwd") + 1;
+	if (len_pass > 1)
+	{
+		pass_str = malloc(len_pass);
+		if (httpd_req_get_hdr_value_str(req, "my-connect-pwd", pass_str, len_pass) == ESP_OK)
+		{
+			ESP_LOGI(TAG, "http_server_wifi_connect_json_handler: Found header => my-connect-pwd: %s", pass_str);
+		}
+	}
+
+	// Update the Wifi networks configuration and let the wifi application know
+	wifi_config_t *wifi_config = wifi_app_get_wifi_config();
+	memset(wifi_config, 0x00, sizeof(wifi_config_t));
+	memcpy(wifi_config->sta.ssid, ssid_str, len_ssid);
+	memcpy(wifi_config->sta.password, pass_str, len_pass);
+	wifi_app_send_message(WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER);
+
+	free(ssid_str);
+	free(pass_str);
+
+	return ESP_OK;
+}
+
+/**
+ * wifiConnectStatus handler updates the connection status for the web page.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_wifi_connect_status_json_handler(httpd_req_t *req)
+{
+	ESP_LOGI(TAG, "/wifiConnectStatus requested");
+
+	char statusJSON[100];
+
+	sprintf(statusJSON, "{\"wifi_connect_status\":%d}", g_wifi_connect_status);
+
+	httpd_resp_set_type(req, "application/json");
+	httpd_resp_send(req, statusJSON, strlen(statusJSON));
+
+	return ESP_OK;
+}
+
+/**
+ * wifiConnectInfo.json handler updates the web page with connection information.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_wifi_connect_info_json_handler(httpd_req_t *req)
+{
+	ESP_LOGI(TAG, "/wifiConnectInfo.json requested");
+
+	char ipInfoJSON[200];
+	memset(ipInfoJSON, 0, sizeof(ipInfoJSON));
+
+	char ip[IP4ADDR_STRLEN_MAX];
+	char netmask[IP4ADDR_STRLEN_MAX];
+	char gw[IP4ADDR_STRLEN_MAX];
+
+	if (g_wifi_connect_status == HTTP_WIFI_STATUS_CONNECT_SUCCESS)
+	{
+		wifi_ap_record_t wifi_data;
+		ESP_ERROR_CHECK(esp_wifi_sta_get_ap_info(&wifi_data));
+		char *ssid = (char *)wifi_data.ssid;
+
+		esp_netif_ip_info_t ip_info;
+		ESP_ERROR_CHECK(esp_netif_get_ip_info(esp_netif_sta, &ip_info));
+		esp_ip4addr_ntoa(&ip_info.ip, ip, IP4ADDR_STRLEN_MAX);
+		esp_ip4addr_ntoa(&ip_info.netmask, netmask, IP4ADDR_STRLEN_MAX);
+		esp_ip4addr_ntoa(&ip_info.gw, gw, IP4ADDR_STRLEN_MAX);
+
+		sprintf(ipInfoJSON, "{\"ip\":\"%s\",\"netmask\":\"%s\",\"gw\":\"%s\",\"ap\":\"%s\"}", ip, netmask, gw, ssid);
+	}
+
+	httpd_resp_set_type(req, "application/json");
+	httpd_resp_send(req, ipInfoJSON, strlen(ipInfoJSON));
+
+	return ESP_OK;
+}
+
+/**
+ * wifiDisconnect.json handler responds by sending a message to the Wifi application to disconnect.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req)
+{
+	ESP_LOGI(TAG, "wifiDisconect.json requested");
+
+	wifi_app_send_message(WIFI_APP_MSG_USER_REQUESTED_STA_DISCONNECT);
+
+	return ESP_OK;
+}
+
+/**
+ * localTime.json handler responds by sending the local time.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_local_time_json_handler(httpd_req_t *req)
+{
+	ESP_LOGI(TAG, "/localTime.json requested");
+
+	char localTimeJSON[100] = {0};
+
+	if (g_is_local_time_set)
+	{
+		sprintf(localTimeJSON, "{\"time\":\"%s\"}", sntp_time_sync_get_time());
+	}
+
+	httpd_resp_set_type(req, "application/json");
+	httpd_resp_send(req, localTimeJSON, strlen(localTimeJSON));
+
+	return ESP_OK;
+}
+
+/**
+ * apSSID.json handler responds by sending the AP SSID.
+ * @param req HTTP request for which the uri needs to be handled.
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_ap_ssid_json_handler(httpd_req_t *req)
+{
+	ESP_LOGI(TAG, "/apSSID.json requested");
+
+	char ssidJSON[50];
+
+	wifi_config_t *wifi_config = wifi_app_get_wifi_config();
+	esp_wifi_get_config(ESP_IF_WIFI_AP, wifi_config);
+	char *ssid = (char *)wifi_config->ap.ssid;
+
+	sprintf(ssidJSON, "{\"ssid\":\"%s\"}", ssid);
+
+	httpd_resp_set_type(req, "application/json");
+	httpd_resp_send(req, ssidJSON, strlen(ssidJSON));
 
 	return ESP_OK;
 }
@@ -414,93 +619,72 @@ static httpd_handle_t http_server_configure(void)
 	if (httpd_start(&http_server_handle, &config) == ESP_OK)
 	{
 		ESP_LOGI(TAG, "http_server_configure: Registering URI handlers");
-
-		// register query handler
 		httpd_uri_t jquery_js = {
 			.uri = "/jquery-3.3.1.min.js",
 			.method = HTTP_GET,
 			.handler = http_server_jquery_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &jquery_js);
-
-		// register index.html handler
 		httpd_uri_t index_html = {
 			.uri = "/",
 			.method = HTTP_GET,
 			.handler = http_server_index_html_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &index_html);
-
-		// register app.css handler
 		httpd_uri_t app_css = {
 			.uri = "/app.css",
 			.method = HTTP_GET,
 			.handler = http_server_app_css_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &app_css);
-
-		// register app.js handler
 		httpd_uri_t app_js = {
 			.uri = "/app.js",
 			.method = HTTP_GET,
 			.handler = http_server_app_js_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &app_js);
-
-		// register favicon.ico handler
 		httpd_uri_t favicon_ico = {
 			.uri = "/favicon.ico",
 			.method = HTTP_GET,
 			.handler = http_server_favicon_ico_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &favicon_ico);
-
 		httpd_uri_t tensao_png = {
 			.uri = "/tensao.png",
 			.method = HTTP_GET,
 			.handler = http_server_tensao_png_handler,
 			.user_ctx = NULL};
-
 		httpd_register_uri_handler(http_server_handle, &tensao_png);
-
 		httpd_uri_t potencia_png = {
 			.uri = "/potencia.png",
 			.method = HTTP_GET,
 			.handler = http_server_potencia_png_handler,
 			.user_ctx = NULL};
-
 		httpd_register_uri_handler(http_server_handle, &potencia_png);
 		httpd_uri_t corrente_png = {
 			.uri = "/corrente.png",
 			.method = HTTP_GET,
 			.handler = http_server_corrente_png_handler,
 			.user_ctx = NULL};
-
 		httpd_register_uri_handler(http_server_handle, &corrente_png);
 		httpd_uri_t custo_png = {
 			.uri = "/custo.png",
 			.method = HTTP_GET,
 			.handler = http_server_custo_png_handler,
 			.user_ctx = NULL};
-
 		httpd_register_uri_handler(http_server_handle, &custo_png);
 		httpd_uri_t gastos_png = {
 			.uri = "/gastos.png",
 			.method = HTTP_GET,
 			.handler = http_server_gastos_png_handler,
 			.user_ctx = NULL};
-
 		httpd_register_uri_handler(http_server_handle, &gastos_png);
 		httpd_uri_t kwh_png = {
 			.uri = "/kwh.png",
 			.method = HTTP_GET,
 			.handler = http_server_kwh_png_handler,
 			.user_ctx = NULL};
-
 		httpd_register_uri_handler(http_server_handle, &kwh_png);
-
-
-		// register OTAupdate handler
 		httpd_uri_t OTA_update = {
 			.uri = "/OTAupdate",
 			.method = HTTP_POST,
@@ -508,28 +692,71 @@ static httpd_handle_t http_server_configure(void)
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &OTA_update);
 
-		// register OTAstatus handler
 		httpd_uri_t OTA_status = {
 			.uri = "/OTAstatus",
 			.method = HTTP_POST,
 			.handler = http_server_OTA_status_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &OTA_status);
-
-		// register dhtSensor.json handler
 		httpd_uri_t dht_sensor_json = {
 			.uri = "/dhtSensor.json",
 			.method = HTTP_GET,
 			.handler = http_server_get_dht_sensor_readings_json_handler,
 			.user_ctx = NULL};
 		httpd_register_uri_handler(http_server_handle, &dht_sensor_json);
+		httpd_uri_t wifi_connect_json = {
+			.uri = "/wifiConnect.json",
+			.method = HTTP_POST,
+			.handler = http_server_wifi_connect_json_handler,
+			.user_ctx = NULL};
+		httpd_register_uri_handler(http_server_handle, &wifi_connect_json);
+
+				httpd_uri_t wifi_connect_status_json = {
+			.uri = "/wifiConnectStatus",
+			.method = HTTP_POST,
+			.handler = http_server_wifi_connect_status_json_handler,
+			.user_ctx = NULL};
+		httpd_register_uri_handler(http_server_handle, &wifi_connect_status_json);
+
+		// register wifiConnectInfo.json handler
+		httpd_uri_t wifi_connect_info_json = {
+			.uri = "/wifiConnectInfo.json",
+			.method = HTTP_GET,
+			.handler = http_server_get_wifi_connect_info_json_handler,
+			.user_ctx = NULL};
+		httpd_register_uri_handler(http_server_handle, &wifi_connect_info_json);
+
+		// register wifiDisconnect.json handler
+		httpd_uri_t wifi_disconnect_json = {
+			.uri = "/wifiDisconnect.json",
+			.method = HTTP_DELETE,
+			.handler = http_server_wifi_disconnect_json_handler,
+			.user_ctx = NULL};
+		httpd_register_uri_handler(http_server_handle, &wifi_disconnect_json);
+
+		// register localTime.json handler
+		httpd_uri_t local_time_json = {
+			.uri = "/localTime.json",
+			.method = HTTP_GET,
+			.handler = http_server_get_local_time_json_handler,
+			.user_ctx = NULL};
+		httpd_register_uri_handler(http_server_handle, &local_time_json);
+
+		// register apSSID.json handler
+		httpd_uri_t ap_ssid_json = {
+			.uri = "/apSSID.json",
+			.method = HTTP_GET,
+			.handler = http_server_get_ap_ssid_json_handler,
+			.user_ctx = NULL};
+
+		httpd_register_uri_handler(http_server_handle, &ap_ssid_json);
+
+
 
 		return http_server_handle;
 	}
-
 	return NULL;
 }
-
 void http_server_start(void)
 {
 	if (http_server_handle == NULL)
@@ -537,7 +764,6 @@ void http_server_start(void)
 		http_server_handle = http_server_configure();
 	}
 }
-
 void http_server_stop(void)
 {
 	if (http_server_handle)
@@ -553,14 +779,12 @@ void http_server_stop(void)
 		task_http_server_monitor = NULL;
 	}
 }
-
 BaseType_t http_server_monitor_send_message(http_server_message_e msgID)
 {
 	http_server_queue_message_t msg;
 	msg.msgID = msgID;
 	return xQueueSend(http_server_monitor_queue_handle, &msg, portMAX_DELAY);
 }
-
 void http_server_fw_update_reset_callback(void *arg)
 {
 	ESP_LOGI(TAG, "http_server_fw_update_reset_callback: Timer timed-out, restarting the device");
