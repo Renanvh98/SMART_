@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<script src='jquery-3.3.1.min.js'></script>
-	<link rel="stylesheet" href="app.css">
-	<script async src="app.js"></script>
-	<title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <script src='jquery-3.3.1.min.js'></script>
+    <link rel="stylesheet" href="app.css">
+    <script async src="app.js"></script>
 </head>
-
 <body>
     <header>
         <h1>MONITOR EM TEMPO REAL</h1>
     </header>
-
     <div id="OTA">
 
         <div id="latest_firmware"></div>
@@ -34,7 +30,8 @@
     <div class="row">
         <div class="column">
             <img src="tensao.png">
-            <h4 for="voltage_reading" title="Mede a diferença de potencial elétrico entre dois pontos em um circuito elétrico.">
+            <h4 for="voltage_reading"
+                title="Mede a diferença de potencial elétrico entre dois pontos em um circuito elétrico.">
                 Tensão:
                 <div id="voltage_reading">
             </h4>
@@ -52,7 +49,8 @@
         <div class="row">
             <div class="column">
                 <img src="potencia.png">
-                <h4 for="power_reading" title="Indica a taxa na qual a energia é transferida ou convertida em um circuito elétrico.">
+                <h4 for="power_reading"
+                    title="Indica a taxa na qual a energia é transferida ou convertida em um circuito elétrico.">
                     Potência:
                     <div id="power_reading">
                 </h4>
@@ -82,46 +80,51 @@
     </div>
     </div>
 
-	<div id="WiFiConnect">
-		<h2>ESP32 WiFi Connect</h2>
-		<section>
-			<input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
-			<input id="connect_pass" type="password" maxlength="64" placeholder="Password" value="">
-			<input type="checkbox" onclick="showPassword()">Show Password
-		</section>
-		<div class="buttons">
-			<input id="connect_wifi" type="button" value="Connect" />
-		</div>
-		<div id="wifi_connect_credentials_errors"></div>
-		<h4 id="wifi_connect_status"></h4>
-	</div>
+    <div id="WiFiConnect">
+        <h2>ESP32 WiFi Connect</h2>
+        <section>
+            <input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
+            <input id="connect_pass" type="password" maxlength="64" placeholder="Password" value="">
+            <input type="checkbox" onclick="showPassword()">Show Password
+        </section>
+        <div class="buttons">
+            <input id="connect_wifi" type="button" value="Connect" />
+        </div>
+        <div id="wifi_connect_credentials_errors"></div>
+        <h4 id="wifi_connect_status"></h4>
+    </div>
     <br>
     <div id="EspSSID">
-		<h2>ESP32 SSID</h2>
-		<label for="ap_ssid">Access Point SSID: </label>
-		<div id="ap_ssid"></div>
-	</div>
-	<hr>
+        <h2>ESP32 SSID</h2>
+        <label for="ap_ssid">Access Point SSID: </label>
+        <div id="ap_ssid"></div>
+    </div>
+    <hr>
 
-	<div id="LocalTime">
-		<h2>SNTP Time Synchronization</h2>
-		<label for="local_time">Connect to WiFi for Local Time: </label>
-		<div id="local_time"></div>
-	</div>
+    <div id="LocalTime">
+        <h2>SNTP Time Synchronization</h2>
+        <label for="local_time">Connect to WiFi for Local Time: </label>
+        <div id="local_time"></div>
+    </div>
     <div id="ConnectInfo">
-		<section>
-			<div id="connected_ap_label"></div> <div id="connected_ap"></div>
-		</section>
-		<div id="ip_address_label"></div> <div id="wifi_connect_ip"></div>
-		<div id="netmask_label"></div> <div id="wifi_connect_netmask"></div>
-		<div id="gateway_label"></div> <div id="wifi_connect_gw"></div>
-		<div class="buttons">
-			<input id="disconnect_wifi" type="button" value="Disconnect" />
-		</div>
-	</div>
-	<hr>
+        <section>
+            <div id="connected_ap_label"></div>
+            <div id="connected_ap"></div>
+        </section>
+        <div id="ip_address_label"></div>
+        <div id="wifi_connect_ip"></div>
+        <div id="netmask_label"></div>
+        <div id="wifi_connect_netmask"></div>
+        <div id="gateway_label"></div>
+        <div id="wifi_connect_gw"></div>
+        <div class="buttons">
+            <input id="disconnect_wifi" type="button" value="Disconnect" />
+        </div>
+    </div>
+    <hr>
     <div id="clock"></div>
 
 </body>
+
 </html>
 <html>

@@ -4,7 +4,6 @@
 
 #include "esp_log.h"
 #include "nvs_flash.h"
-
 #include "aws_iot.h"
 #include "DHT22.h"
 #include "sntp_time_sync.h"

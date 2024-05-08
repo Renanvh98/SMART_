@@ -166,7 +166,7 @@ function getWifiConnectStatus()
 		{
 			document.getElementById("wifi_connect_status").innerHTML = "<h4 class='gr'>Connection Success!</h4>";
 			stopWifiConnectStatusInterval();
-			//getConnectInfo();
+			getConnectInfo();
 		}
 	}
 }

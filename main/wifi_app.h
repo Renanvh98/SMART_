@@ -15,7 +15,7 @@
 
 // Callback typedef
 typedef void (*wifi_connected_event_callback_t)(void);
-
+ 
 // WiFi application settings
 #define WIFI_AP_SSID				"ESP32_AP"			// AP name
 #define WIFI_AP_PASSWORD			"password"			// AP password
