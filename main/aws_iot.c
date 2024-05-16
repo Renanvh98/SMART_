@@ -221,7 +221,3 @@ void aws_iot_start(void)
     }
 	
 }
-
-
-
-

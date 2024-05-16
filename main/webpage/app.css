@@ -39,19 +39,19 @@ h1 {
     margin: 0;
     padding: 10px;
     font-size: 25px;
-    color: hsl(215, 50%, 23%);
-    border-bottom: #1d3557;
+    color: hsl(0, 0%, 0%);
+    border-bottom: #000000;
 }
 
 h2 {
     font-size: 20px;
-    color: hsl(215, 50%, 23%);
+    color: hsl(0, 0%, 0%);
     text-align: center;
     margin-top: 5px;
     margin-bottom: 5px;
-    border-bottom: 2px solid #1d3557;
+    border-bottom: 2px solid #000000;
     padding: 5px;
-    border-bottom: 2px solid #1d3557;
+    border-bottom: 2px solid #000000;
 
 }
 

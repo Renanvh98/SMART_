@@ -211,6 +211,7 @@ function checkCredentials()
 	selectedSSID = $("#connect_ssid").val();
 	pwd = $("#connect_pass").val();
 	
+	
 	if (selectedSSID == "")
 	{
 		errorList += "<h4 class='rd'>SSID cannot be empty!</h4>";
@@ -302,11 +303,13 @@ function getLocalTime()
 /**
  * Gets the ESP32's access point SSID for displaying on the web page.
  */
-function getSSID()
-{
-	$.getJSON('/apSSID.json', function(data) {
-		$("#ap_ssid").text(data["ssid"]);
-	});
+function getSSID() {
+    $.getJSON('/apSSID.json', function(data) {
+        // Codifica o SSID usando encodeURIComponent
+
+        // Atribui o SSID codificado ao elemento #ap_ssid
+        $("#ap_ssid").text(ssid);
+    });
 }
 
 function updateClock() {

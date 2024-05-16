@@ -58,6 +58,7 @@ esp_err_t app_nvs_save_sta_creds(void)
 		esp_err = nvs_commit(handle);
 		if (esp_err != ESP_OK)
 		{
+			
 			printf("app_nvs_save_sta_creds: Error (%s) comitting credentials to NVS!\n", esp_err_to_name(esp_err));
 			return esp_err;
 		}

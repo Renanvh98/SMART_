@@ -7,6 +7,7 @@
 #include "wifi_app.h"
 #include "esp_wifi.h"
 #include "lwip/ip4_addr.h"
+#include <string.h>
 
 #include "DHT22.h"
 #include "http_server.h"
@@ -750,8 +751,6 @@ static httpd_handle_t http_server_configure(void)
 			.user_ctx = NULL};
 
 		httpd_register_uri_handler(http_server_handle, &ap_ssid_json);
-
-
 
 		return http_server_handle;
 	}

@@ -193,6 +193,7 @@ static void wifi_app_connect_sta(void)
 {
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, wifi_app_get_wifi_config()));
 	ESP_ERROR_CHECK(esp_wifi_connect());
+	ESP_LOGI(TAG, "SSID: %s | PASS: %s", wifi_app_get_wifi_config()->sta.ssid, wifi_app_get_wifi_config()->sta.password);
 }
 
 /**

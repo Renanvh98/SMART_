@@ -80,7 +80,7 @@ float getCurrent()
 	float sum = 0.0;
 	float peak_current = 0.0;
 	const int sample_count = 500;	 // Número de amostras para a média
-	const float sensitivity = 0.185; // Sensibilidade do ACS712 de 185mV/A
+	const float sensitivity = 0.22; // Sensibilidade do ACS712 de 185mV/A
 
 	// Realiza a leitura durante 500ms e calcula a média e o pico
 	for (int i = 0; i < sample_count; i++)
@@ -163,6 +163,8 @@ static void DHT22_task(void *pvParameter)
 		printf("Potência: %.4f\n", getPower());
 		printf("Total de Energia: %.4f\n", getTotalEnergy());
 		printf("Custo por hora: %.4f\n", getCustoPorHora());
+
+		printf("Heap: %u\n", (unsigned int)esp_get_free_heap_size());
 		vTaskDelay(4000 / portTICK_PERIOD_MS);
 	}
 }
