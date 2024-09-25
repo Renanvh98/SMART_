@@ -1,6 +1,6 @@
 {
     "idf.adapterTargetName": "esp32",
-    "idf.portWin": "COM4",
+    "idf.portWin": "COM3",
     "idf.flashType": "UART",
     "files.associations": {
         "webservices.h": "c",
@@ -8,5 +8,15 @@
         "wifi_app.h": "c",
         "tasks_common.h": "c",
         "sntp_time_sync.h": "c"
-    }
+    },
+    "idf.espIdfPathWin": "C:\\Users\\renan\\esp\\v5.2.1\\esp-idf",
+    "idf.pythonBinPathWin": "C:\\Users\\renan\\.espressif\\python_env\\idf5.2_py3.11_env\\Scripts\\python.exe",
+    "idf.toolsPathWin": "C:\\Users\\renan\\.espressif",
+    "idf.customExtraPaths": "C:\\Users\\renan\\.espressif\\tools\\xtensa-esp-elf-gdb\\12.1_20231023\\xtensa-esp-elf-gdb\\bin;C:\\Users\\renan\\.espressif\\tools\\riscv32-esp-elf-gdb\\12.1_20231023\\riscv32-esp-elf-gdb\\bin;C:\\Users\\renan\\.espressif\\tools\\xtensa-esp-elf\\esp-13.2.0_20230928\\xtensa-esp-elf\\bin;C:\\Users\\renan\\.espressif\\tools\\riscv32-esp-elf\\esp-13.2.0_20230928\\riscv32-esp-elf\\bin;C:\\Users\\renan\\.espressif\\tools\\esp32ulp-elf\\2.35_20220830\\esp32ulp-elf\\bin;C:\\Users\\renan\\.espressif\\tools\\cmake\\3.24.0\\bin;C:\\Users\\renan\\.espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20230921\\openocd-esp32\\bin;C:\\Users\\renan\\.espressif\\tools\\ninja\\1.11.1;C:\\Users\\renan\\.espressif\\tools\\idf-exe\\1.0.3;C:\\Users\\renan\\.espressif\\tools\\ccache\\4.8\\ccache-4.8-windows-x86_64;C:\\Users\\renan\\.espressif\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;C:\\Users\\renan\\.espressif\\tools\\esp-rom-elfs\\20230320",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "C:\\Users\\renan\\.espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20230921/openocd-esp32/share/openocd/scripts",
+        "IDF_CCACHE_ENABLE": "1",
+        "ESP_ROM_ELF_DIR": "C:\\Users\\renan\\.espressif\\tools\\esp-rom-elfs\\20230320/"
+    },
+    "idf.gitPathWin": "\\Git\\cmd\\git.exe"
 }

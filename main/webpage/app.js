@@ -199,7 +199,21 @@ function connectWifi()
 	
 	startWifiConnectStatusInterval();
 }
+function toggleAccessibilityMode() {
+    document.body.classList.toggle('accessibility-mode');
+}
 
+function toggleContent() {
+	var content = document.getElementById('additional-content');
+	var button = document.querySelector('.toggle-button');
+	if (content.classList.contains('hidden')) {
+		content.classList.remove('hidden');
+		button.textContent = 'Mostrar Menos';
+	} else {
+		content.classList.add('hidden');
+		button.textContent = 'Mostrar Mais';
+	}
+}
 /**
  * Checks credentials on connect_wifi button click.
  */
