@@ -18,7 +18,7 @@ void wifi_application_connected_events(void)
 	aws_iot_start();
 }
 
-void app_main(void)
+void app_main(void) 
 {
     // Initialize NVS
 	esp_err_t ret = nvs_flash_init();
