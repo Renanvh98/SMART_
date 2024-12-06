@@ -164,15 +164,34 @@ input[type="text"], input[type="password"] {
     display: flex;
     justify-content: center;
 }
-/* Estilos para Modo de Acessibilidade */
+#accessibility-toggle {
+    font-size: 18px;
+    padding: 15px 30px;
+    border: 2px solid #007BFF; /* Borda azul para destaque */
+    background-color: #007BFF; /* Cor azul para maior contraste */
+    color: #FFFFFF; /* Texto branco */
+    border-radius: 30px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+    transition: background-color 0.3s, box-shadow 0.3s ease;
+}
+
+#accessibility-toggle:hover {
+    background-color: #0056b3; /* Azul mais escuro no hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra no hover */
+}
+/* Modo de Acessibilidade para Daltonismo */
 .accessibility-mode {
-    background-color: #f0f0f0; /* Fundo claro para contraste com texto branco */
-    color: #000000; /* Texto preto para maior legibilidade */
+    background-color: #f8f8f8; /* Fundo neutro claro */
+    color: #000000; /* Texto preto para legibilidade */
 }
 
 .accessibility-mode .column {
-    background-color: #ffffff; /* Fundo branco para as colunas */
+    background-color: #ffebcc; /* Fundo bege claro */
+    border: 2px solid #003f7f; /* Borda azul escura */
     color: #000000; /* Texto preto */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25); /* Sombra mais forte para distinção */
 }
 
 .accessibility-mode h1, 
@@ -182,15 +201,18 @@ input[type="text"], input[type="password"] {
 }
 
 .accessibility-mode input[type="button"] {
-    background-color: #007BFF; /* Azul claro para botões */
-    color: #ffffff; /* Texto branco nos botões */
-    border: 2px solid #ffffff; /* Borda branca */
+    background-color: #28a745; /* Verde escuro */
+    color: #ffffff; /* Texto branco */
+    border: none; /* Sem borda para suavidade */
     font-size: 18px;
     padding: 14px 28px;
+    border-radius: 8px; /* Cantos arredondados */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .accessibility-mode input[type="button"]:hover {
-    background-color: #0056b3; /* Escurece um pouco ao passar o mouse */
+    background-color: #218838; /* Verde mais escuro ao passar o mouse */
 }
 
 .accessibility-mode #voltage_reading,
@@ -198,7 +220,7 @@ input[type="text"], input[type="password"] {
 .accessibility-mode #power_reading,
 .accessibility-mode #cost_reading,
 .accessibility-mode #total_reading {
-    color: #007BFF; /* Cor azul para destacar os números */
+    color: #FF9900; /* Laranja para diferenciação */
     font-size: 28px;
 }
 
@@ -207,7 +229,7 @@ input[type="text"], input[type="password"] {
 }
 
 .accessibility-mode a {
-    color: #007BFF; /* Link azul */
+    color: #0056b3; /* Link azul */
     text-decoration: underline;
 }
 
@@ -215,8 +237,20 @@ input[type="text"], input[type="password"] {
     filter: none; /* Remove o escurecimento das imagens */
 }
 
-/* Aumenta o espaçamento entre os elementos para facilitar o toque */
-.accessibility-mode .column {
-    padding: 30px;
-    margin-bottom: 30px;
+/* Adiciona um contraste claro ao fundo dos containers */
+.accessibility-mode .container {
+    background-color: #cce5ff; /* Fundo azul claro */
+    border: 2px solid #0056b3; /* Borda azul escura */
+    color: #000000; /* Texto preto */
+}
+
+.accessibility-mode .container:hover {
+    background-color: #b8daff; /* Azul mais claro ao passar o mouse */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra mais forte */
+    transform: translateY(-5px);
+}
+
+.accessibility-mode .buttons {
+    display: flex;
+    justify-content: center;
 }
