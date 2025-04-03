@@ -48,12 +48,12 @@
             <div class="column">
                 <img src="humidade.png" alt="Potência">
                 <h4>Humidade: </h4>
-                <div id="!!!!!!"></div>
+                <div id="humidity_reading"></div>
             </div>
             <div class="column">
                 <img src="temperatura.png" alt="Energia">
                 <h4>Temperatura: </h4>
-                <div id="!!!!!!"></div>
+                <div id="temperature_reading"></div>
             </div>
         </div>
         <div class="row">
@@ -62,52 +62,67 @@
                 <h4>Valor:</h4>
                 <div id="cost_reading"></div>
             </div>
-
         </div>
-        <button id="accessibility-toggle" onclick="toggleAccessibilityMode()">Modo Acessibilidade (Daltonismo)</button>
+        <div class="row">
+            <div class="column">
+                <img src="gastos.png" alt="Gastos">
+                <h4>Valor acumulado na última hora:</h4>
+                <div id="cost_accumulated"></div>
+            </div>
 
-        <button class="toggle-button" onclick="toggleContent()">Mostrar Mais</button>
-        <div id="additional-content" class="hidden">
-            <div id="WiFiConnect">
-                <h2>CONEXÃO WIFI</h2>
-                <section>
-                    <input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
-                    <input id="connect_pass" type="password" maxlength="64" placeholder="Password" value="">
-                    <input type="checkbox" onclick="showPassword()">Show Password
-                </section>
-                <div class="buttons">
-                    <input id="connect_wifi" type="button" value="Connect" />
-                </div>
-                <div id="wifi_connect_credentials_errors"></div>
-                <h4 id="wifi_connect_status"></h4>
+        <div class="row">
+            <div class="column">
+                <img src="tempo.png" alt="Tempo">
+                <h4>Tempo restante:</h4>
+                <div id="time_remaining"></div>
             </div>
-            <div id="EspSSID">
-                <h2>SSID</h2>
-                <label for="ap_ssid">Ponto de acesso SSID: </label>
-                <div id="ap_ssid"></div>
+        </div>
+
+    </div>
+    <button id="accessibility-toggle" onclick="toggleAccessibilityMode()">Modo Acessibilidade (Daltonismo)</button>
+
+    <button class="toggle-button" onclick="toggleContent()">Mostrar Mais</button>
+    <div id="additional-content" class="hidden">
+        <div id="WiFiConnect">
+            <h2>CONEXÃO WIFI</h2>
+            <section>
+                <input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
+                <input id="connect_pass" type="password" maxlength="64" placeholder="Password" value="">
+                <input type="checkbox" onclick="showPassword()">Show Password
+            </section>
+            <div class="buttons">
+                <input id="connect_wifi" type="button" value="Connect" />
             </div>
-            <hr>
-            <div id="LocalTime">
-                <h2>SNTP SINCRONIZAÇÃO TEMPO</h2>
-                <label for="local_time">Conectar ao WiFi para obter o horário local: </label>
-                <div id="local_time"></div>
+            <div id="wifi_connect_credentials_errors"></div>
+            <h4 id="wifi_connect_status"></h4>
+        </div>
+        <div id="EspSSID">
+            <h2>SSID</h2>
+            <label for="ap_ssid">Ponto de acesso SSID: </label>
+            <div id="ap_ssid"></div>
+        </div>
+        <hr>
+        <div id="LocalTime">
+            <h2>SNTP SINCRONIZAÇÃO TEMPO</h2>
+            <label for="local_time">Conectar ao WiFi para obter o horário local: </label>
+            <div id="local_time"></div>
+        </div>
+        <div id="ConnectInfo">
+            <section>
+                <div id="connected_ap_label"></div>
+                <div id="connected_ap"></div>
+            </section>
+            <div id="ip_address_label"></div>
+            <div id="wifi_connect_ip"></div>
+            <div id="netmask_label"></div>
+            <div id="wifi_connect_netmask"></div>
+            <div id="gateway_label"></div>
+            <div id="wifi_connect_gw"></div>
+            <div class="buttons">
+                <input id="disconnect_wifi" type="button" value="Disconnect" />
             </div>
-            <div id="ConnectInfo">
-                <section>
-                    <div id="connected_ap_label"></div>
-                    <div id="connected_ap"></div>
-                </section>
-                <div id="ip_address_label"></div>
-                <div id="wifi_connect_ip"></div>
-                <div id="netmask_label"></div>
-                <div id="wifi_connect_netmask"></div>
-                <div id="gateway_label"></div>
-                <div id="wifi_connect_gw"></div>
-                <div class="buttons">
-                    <input id="disconnect_wifi" type="button" value="Disconnect" />
-                </div>
-            </div>
-            <hr>
+        </div>
+        <hr>
         <div id="clock"></div>
     </div>
 </body>

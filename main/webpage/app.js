@@ -112,24 +112,61 @@ function otaRebootTimer() {
         otaTimerVar = setTimeout(otaRebootTimer, 1000);
     }
 }
+let totalEnergy = 0;
+let totalCost = 0;
+let pricePerKWh = 0.75; // Preço por kWh
+let elapsedTime = 0; // Tempo decorrido em segundos
 
 
 
-function getDHTSensorValues() {
-    $.getJSON('/dhtSensor.json', function (data) {
+function getSimulatedValues() {
+    let voltage = (127 + Math.random() * 2 - 1).toFixed(2);  // Entre 126V e 128V
+    let current = (0.5 + Math.random() * 1.5).toFixed(2);   // Entre 0.5A e 2A
+    let power = (voltage * current).toFixed(2);            // P = V * I
+    let energyMoment = ((power * 5) / 3600).toFixed(4);    // Energia consumida nos últimos 5s em kWh
+    let humidity = (30 + Math.random() * 40).toFixed(2);   // Entre 30% e 70%
+    let temperature = (20 + Math.random() * 10).toFixed(2); // Entre 20°C e 30°C
 
-        $("#voltage_reading").text(data["voltage"] + " V");
-        $("#current_reading").text(data["current"] + " A");
-        $("#power_reading").text(data["power"] + " W");
-        $("#total_reading").text(data["total"] + " kWh");
-        $("#cost_reading").text("R$" + data["custo"]);
+    // Cálculo do custo momentâneo
+    let costMoment = (parseFloat(energyMoment) * pricePerKWh).toFixed(2);
 
-    });
+    // Acumulando energia e custo
+    totalEnergy += parseFloat(energyMoment);
+    totalCost = (totalEnergy * pricePerKWh).toFixed(2);
+    elapsedTime += 5;
+
+    if (elapsedTime >= 3600) { // Resetar a cada 1 hora
+        totalEnergy = 0;
+        totalCost = 0;
+        elapsedTime = 0;
+    }
+
+    // Atualizando os valores na página
+    $("#voltage_reading").text(voltage + " V");
+    $("#current_reading").text(current + " A");
+    $("#power_reading").text(power + " W");
+    $("#total_reading").text(totalEnergy.toFixed(4) + " kWh");
+    
+    $("#cost_reading").text("R$" + costMoment);  // Custo apenas dos últimos 5s
+    $("#cost_accumulated").text("R$" + totalCost); // Custo acumulado na última hora
+
+    $("#humidity_reading").text(humidity + " %");
+    $("#temperature_reading").text(temperature + " °C");
+
+    // Atualizando cronômetro
+    let remainingTime = 3600 - elapsedTime;
+    let minutes = Math.floor(remainingTime / 60);
+    let seconds = remainingTime % 60;
+    $("#time_remaining").text(`${minutes}m ${seconds}s`);
 }
 
-function startDHTSensorInterval() {
-    setInterval(getDHTSensorValues, 5000);
+function startSimulation() {
+    getSimulatedValues(); // Atualiza ao carregar
+    setInterval(getSimulatedValues, 5000); // Atualiza a cada 5s
 }
+
+$(document).ready(startSimulation);
+
 
 
 function stopWifiConnectStatusInterval()
