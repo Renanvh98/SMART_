@@ -74,7 +74,8 @@ img {
 }
 
 /* Estilo dos botões */
-input[type="button"], .toggle-button {
+input[type="button"],
+.toggle-button {
     padding: 12px 25px;
     background-color: #1abc9c;
     color: white;
@@ -85,21 +86,27 @@ input[type="button"], .toggle-button {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="button"]:hover, .toggle-button:hover {
+input[type="button"]:hover,
+.toggle-button:hover {
     background-color: #16a085;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Estilo dos campos de entrada */
-input[type="text"], input[type="password"] {
-    width: 80%; /* Reduz a largura para 80% */
-    max-width: 300px; /* Define uma largura máxima */
-    padding: 8px; /* Reduz o padding */
+input[type="text"],
+input[type="password"] {
+    width: 80%;
+    /* Reduz a largura para 80% */
+    max-width: 300px;
+    /* Define uma largura máxima */
+    padding: 8px;
+    /* Reduz o padding */
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 10px;
     display: block;
-    margin: 0 auto; /* Centraliza o campo */
+    margin: 0 auto;
+    /* Centraliza o campo */
 }
 
 /* Estilo das caixas de leitura */
@@ -107,7 +114,11 @@ input[type="text"], input[type="password"] {
 #current_reading,
 #power_reading,
 #cost_reading,
-#total_reading {
+#total_reading,
+#time_remaining,
+#cost_accumulated,
+#temperature_reading,
+#humidity_reading {
     font-size: 24px;
     color: #3498db;
     font-weight: bold;
@@ -115,15 +126,27 @@ input[type="text"], input[type="password"] {
     transition: color 0.3s ease, font-size 0.3s ease;
 }
 
-#voltage_reading:hover, #current_reading:hover, #power_reading:hover, 
-#cost_reading:hover, #total_reading:hover {
-    color: #e74c3c;
+#voltage_reading:hover,
+#current_reading:hover,
+#power_reading:hover,
+#cost_reading:hover,
+#total_reading:hover,
+#time_remaining:hover,
+#cost_accumulated:hover,
+#temperature_reading:hover,
+#humidity_reading:hover {
+    color: #ce2c1a;
     font-size: 26px;
 }
 
 /* Estilo dos tempos e conexões */
-#clock, #local_time, #ap_ssid, #connected_ap,
-#wifi_connect_ip, #wifi_connect_netmask, #wifi_connect_gw {
+#clock,
+#local_time,
+#ap_ssid,
+#connected_ap,
+#wifi_connect_ip,
+#wifi_connect_netmask,
+#wifi_connect_gw {
     font-size: 16px;
     color: #2c3e50;
     text-align: center;
@@ -156,7 +179,10 @@ input[type="text"], input[type="password"] {
 }
 
 /* Estilo do contêiner WiFi */
-#WiFiConnect, #EspSSID, #LocalTime, #ConnectInfo {
+#WiFiConnect,
+#EspSSID,
+#LocalTime,
+#ConnectInfo {
     margin-bottom: 30px;
 }
 
@@ -164,12 +190,16 @@ input[type="text"], input[type="password"] {
     display: flex;
     justify-content: center;
 }
+
 #accessibility-toggle {
     font-size: 18px;
     padding: 15px 30px;
-    border: 2px solid #007BFF; /* Borda azul para destaque */
-    background-color: #007BFF; /* Cor azul para maior contraste */
-    color: #FFFFFF; /* Texto branco */
+    border: 2px solid #007BFF;
+    /* Borda azul para destaque */
+    background-color: #007BFF;
+    /* Cor azul para maior contraste */
+    color: #FFFFFF;
+    /* Texto branco */
     border-radius: 30px;
     cursor: pointer;
     display: block;
@@ -178,75 +208,103 @@ input[type="text"], input[type="password"] {
 }
 
 #accessibility-toggle:hover {
-    background-color: #0056b3; /* Azul mais escuro no hover */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra no hover */
+    background-color: #0056b3;
+    /* Azul mais escuro no hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* Sombra no hover */
 }
+
 /* Modo de Acessibilidade para Daltonismo */
 .accessibility-mode {
-    background-color: #f8f8f8; /* Fundo neutro claro */
-    color: #000000; /* Texto preto para legibilidade */
+    background-color: #f8f8f8;
+    /* Fundo neutro claro */
+    color: #000000;
+    /* Texto preto para legibilidade */
 }
 
 .accessibility-mode .column {
-    background-color: #ffebcc; /* Fundo bege claro */
-    border: 2px solid #003f7f; /* Borda azul escura */
-    color: #000000; /* Texto preto */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25); /* Sombra mais forte para distinção */
+    background-color: #ffebcc;
+    /* Fundo bege claro */
+    border: 2px solid #003f7f;
+    /* Borda azul escura */
+    color: #000000;
+    /* Texto preto */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    /* Sombra mais forte para distinção */
 }
 
-.accessibility-mode h1, 
-.accessibility-mode h2, 
+.accessibility-mode h1,
+.accessibility-mode h2,
 .accessibility-mode h4 {
-    color: #333333; /* Texto escuro nos cabeçalhos */
+    color: #333333;
+    /* Texto escuro nos cabeçalhos */
 }
 
 .accessibility-mode input[type="button"] {
-    background-color: #28a745; /* Verde escuro */
-    color: #ffffff; /* Texto branco */
-    border: none; /* Sem borda para suavidade */
+    background-color: #28a745;
+    /* Verde escuro */
+    color: #ffffff;
+    /* Texto branco */
+    border: none;
+    /* Sem borda para suavidade */
     font-size: 18px;
     padding: 14px 28px;
-    border-radius: 8px; /* Cantos arredondados */
+    border-radius: 8px;
+    /* Cantos arredondados */
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .accessibility-mode input[type="button"]:hover {
-    background-color: #218838; /* Verde mais escuro ao passar o mouse */
+    background-color: #218838;
+    /* Verde mais escuro ao passar o mouse */
 }
 
 .accessibility-mode #voltage_reading,
 .accessibility-mode #current_reading,
 .accessibility-mode #power_reading,
 .accessibility-mode #cost_reading,
-.accessibility-mode #total_reading {
-    color: #FF9900; /* Laranja para diferenciação */
+.accessibility-mode #total_reading,
+.accessibility-mode #time_remaining,
+.accessibility-mode #cost_accumulated,
+.accessibility-mode #temperature_reading,
+.accessibility-mode #humidity_reading  {
+    color: #FF9900;
+    /* Laranja para diferenciação */
     font-size: 28px;
 }
 
 .accessibility-mode hr {
-    background: #333333; /* Linha escura */
+    background: #333333;
+    /* Linha escura */
 }
 
 .accessibility-mode a {
-    color: #0056b3; /* Link azul */
+    color: #0056b3;
+    /* Link azul */
     text-decoration: underline;
 }
 
 .accessibility-mode img {
-    filter: none; /* Remove o escurecimento das imagens */
+    filter: none;
+    /* Remove o escurecimento das imagens */
 }
 
 /* Adiciona um contraste claro ao fundo dos containers */
 .accessibility-mode .container {
-    background-color: #cce5ff; /* Fundo azul claro */
-    border: 2px solid #0056b3; /* Borda azul escura */
-    color: #000000; /* Texto preto */
+    background-color: #cce5ff;
+    /* Fundo azul claro */
+    border: 2px solid #0056b3;
+    /* Borda azul escura */
+    color: #000000;
+    /* Texto preto */
 }
 
 .accessibility-mode .container:hover {
-    background-color: #b8daff; /* Azul mais claro ao passar o mouse */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra mais forte */
+    background-color: #b8daff;
+    /* Azul mais claro ao passar o mouse */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Sombra mais forte */
     transform: translateY(-5px);
 }
 

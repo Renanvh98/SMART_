@@ -124,8 +124,8 @@ function getSimulatedValues() {
     let current = (0.5 + Math.random() * 1.5).toFixed(2);   // Entre 0.5A e 2A
     let power = (voltage * current).toFixed(2);            // P = V * I
     let energyMoment = ((power * 5) / 3600).toFixed(4);    // Energia consumida nos últimos 5s em kWh
-    let humidity = (30 + Math.random() * 40).toFixed(2);   // Entre 30% e 70%
-    let temperature = (20 + Math.random() * 10).toFixed(2); // Entre 20°C e 30°C
+    let humidity = (30 + Math.random() * 20).toFixed(2);   // Entre 30% e 70%
+    let temperature = (20 + Math.random() * 2).toFixed(2); // Entre 20°C e 22°C
 
     // Cálculo do custo momentâneo
     let costMoment = (parseFloat(energyMoment) * pricePerKWh).toFixed(2);
